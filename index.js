@@ -120,14 +120,14 @@ async function handleNewTicket(interaction) {
   const permissionOverwrites = [
     {
       id: guild.roles.everyone,
-      deny: [PermissionFlagBits.ViewChannel],
+      deny: [PermissionFlagsBits.ViewChannel],
     },
     {
       id: user.id,
       allow: [
-        PermissionFlagBits.ViewChannel,
-        PermissionFlagBits.SendMessages,
-        PermissionFlagBits.ReadMessageHistory,
+        PermissionFlagsBits.ViewChannel,
+        PermissionFlagsBits.SendMessages,
+        PermissionFlagsBits.ReadMessageHistory,
       ],
     },
   ];
@@ -140,9 +140,9 @@ async function handleNewTicket(interaction) {
     permissionOverwrites.push({
       id: supportRole.id,
       allow: [
-        PermissionFlagBits.ViewChannel,
-        PermissionFlagBits.SendMessages,
-        PermissionFlagBits.ReadMessageHistory,
+        PermissionFlagsBits.ViewChannel,
+        PermissionFlagsBits.SendMessages,
+        PermissionFlagsBits.ReadMessageHistory,
       ],
     });
   }
