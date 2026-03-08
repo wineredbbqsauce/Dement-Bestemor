@@ -123,7 +123,7 @@ async function handleNewTicket(interaction) {
   if (existing) {
     await interaction.reply({
       content: `You already have an open ticket: ${existing}`,
-      ephemeral: true,
+      flags: 64, // Ephemeral
     });
     return;
   }
@@ -200,7 +200,7 @@ async function handleNewTicket(interaction) {
 
   await interaction.reply({
     content: `✅ Your ticket has been created: ${ticketChannel}`,
-    ephemeral: true,
+    flags: 64, // Ephemeral
   });
 }
 
