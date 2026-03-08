@@ -1,5 +1,5 @@
 require("dotenv").config();
-require("./depoly-commands");
+require("./deploy-commands");
 const {
   Client,
   GatewayIntentBits,
