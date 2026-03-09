@@ -10,6 +10,7 @@ const {
   PermissionFlagsBits,
   EmbedBuilder,
 } = require("discord.js");
+const { ActivityType } = require("discord.js");
 
 const client = new Client({
   intents: [
@@ -47,6 +48,15 @@ const TICKET_CATEGORY_ID = "Tickets";
 const SUPPORT_ROLE_NAME = "Support"; // Optional: role that can see tickets
 
 client.once("clientReady", () => {
+  client.user.setPresence({
+    activities: [
+      {
+        name: "Vil du ha litt kake?",
+        type: ActivityType.Listening, // Bruk enum i stedet for strengen "PLAYING" / "LISTENING" / "STREAMING" / "WATCHING"
+      },
+    ],
+    status: "idle",
+  });
   console.log(`Logged in as ${client.user.tag}`);
 });
 
