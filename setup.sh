@@ -75,6 +75,7 @@ fi
 # ─── Ferdig ──────────────────────────────────────────────────────────────────
 echo -e "${GREEN}✓  Setup ferdig!${NC}"
 echo ""
-echo "Start boten med:"
+echo "Starter boten med:"
 echo -e "   ${CYAN}node index.js${NC}"
+node index.js
 echo ""
