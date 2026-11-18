@@ -1,5 +1,5 @@
 require("dotenv").config();
-// require("./deploy-commands");
+
 const {
   Client,
   GatewayIntentBits,
@@ -9,8 +9,9 @@ const {
   ChannelType,
   PermissionFlagsBits,
   EmbedBuilder,
+  SlashCommandBuilder,
+  ActivityType,
 } = require("discord.js");
-const { ActivityType } = require("discord.js");
 
 const client = new Client({
   intents: [
@@ -20,9 +21,6 @@ const client = new Client({
   ],
 });
 
-const { REST, Routes, SlashCommandBuilder } = require("discord.js");
-require("dotenv").config();
-
 const commands = [
   new SlashCommandBuilder()
     .setName("setup")
@@ -30,24 +28,12 @@ const commands = [
     .setDefaultMemberPermissions(0), // Admin only
 ].map((cmd) => cmd.toJSON());
 
-const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
-
-(async () => {
-  try {
-    console.log("Registering slash commands...");
-    await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), {
-      body: commands,
-    });
-    console.log("✅ Slash commands registered!");
-  } catch (error) {
-    console.error("Error registering slash commands:", error);
-  }
-})();
-
 const TICKET_CATEGORY_ID = "Tickets";
 const SUPPORT_ROLE_NAME = "Support"; // Optional: role that can see tickets
 
-client.once("clientReady", () => {
+client.once("clientReady", async () => {
+  console.log(`Logged in as ${client.user.tag}`);
+
   client.user.setPresence({
     activities: [
       {
@@ -57,7 +43,14 @@ client.once("clientReady", () => {
     ],
     status: "idle",
   });
-  console.log(`Logged in as ${client.user.tag}`);
+
+  try {
+    console.log("Registering slash commands...");
+    await client.application.commands.set(commands);
+    console.log("✅ Slash commands registered!");
+  } catch (error) {
+    console.error("Error registering slash commands:", error);
+  }
 });
 
 // ─── /setup command to post the "New Ticket" panel ───────────────────────────
@@ -116,7 +109,7 @@ client.on("messageCreate", async (message) => {
     );
 
     await message.channel.send({ embeds: [embed], components: [row] });
-    message.delete();
+    await message.delete().catch(() => {});
   }
 });
 
@@ -126,10 +119,11 @@ async function handleNewTicket(interaction) {
   const guild = interaction.guild;
   const user = interaction.user;
 
-  // Crheck if user already has an open ticket
-  const existing = guild.channels.cache.find(
-    (c) => c.name === `ticket-${user.username.toLowerCase()}`,
-  );
+  // Check if user already has an open ticket
+
+  const ticketName = `ticket-${user.username.toLowerCase()}-${user.id.slice(-4)}`;
+  const existing = guild.channels.cache.find((c) => c.name === ticketName);
+
   if (existing) {
     await interaction.reply({
       content: `You already have an open ticket: ${existing}`,
@@ -183,7 +177,7 @@ async function handleNewTicket(interaction) {
 
   // Create the ticket channel
   const ticketChannel = await guild.channels.create({
-    name: `ticket-${user.username.toLowerCase()}`,
+    name: ticketName,
     type: ChannelType.GuildText,
     parent: category.id,
     permissionOverwrites,
